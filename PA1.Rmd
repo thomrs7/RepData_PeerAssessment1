@@ -1,0 +1,46 @@
+---
+title: "Reproducible Research: Peer Assessment 1"
+output: html_document
+keep_md: true
+---
+
+## Loading and preprocessing the data
+
+```{r}
+
+archiveFile <- "activity_data.zip"
+if(!file.exists(archiveFile)) {
+    archiveURL <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
+
+    download.file(url=archiveURL,destfile=archiveFile,method="curl")
+
+}
+
+if(!(file.exists("activity"))) { unzip(archiveFile) }
+
+activity = read.csv("activity.csv")
+
+totalSteps <- aggregate(steps ~ date, data = activity, sum, na.rm = TRUE)
+
+summary(totalSteps)
+```
+
+
+
+
+
+
+## What is mean total number of steps taken per day?
+```{r}
+hist(totalSteps$steps)
+``` 
+
+## What is the average daily activity pattern?
+
+
+
+## Imputing missing values
+
+
+
+## Are there differences in activity patterns between weekdays and weekends?
