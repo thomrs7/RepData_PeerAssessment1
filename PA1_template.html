@@ -119,7 +119,8 @@ plot(steps ~ interval, data = stepsInterval, type = &quot;l&quot;)</code></pre>
 <h2>Imputing missing values</h2>
 <p>Total number of missing values</p>
 <pre class="r"><code>missing = sum(is.na(activity$steps))</code></pre>
-<p>There are <strong>2304</strong> valus</p>
+<p>There are <strong>2304</strong> values</p>
+<p>Missing values will be filled by using the mean for the interval in question.</p>
 <pre class="r"><code>interval2steps &lt;- function(interval) {
     stepsInterval[stepsInterval$interval == interval, ]$steps
 }

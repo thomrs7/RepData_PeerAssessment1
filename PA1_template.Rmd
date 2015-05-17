@@ -92,7 +92,9 @@ missing = sum(is.na(activity$steps))
 ```
 
 
-There are  **`r missing`** valus
+There are  **`r missing`** values
+
+Missing values will be filled by using the mean for the interval in question.
 
 ```{r}
 interval2steps <- function(interval) {
