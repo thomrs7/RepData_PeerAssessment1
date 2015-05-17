@@ -1,25 +1,167 @@
 ---
 title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
+output: html_document
+keep_md: true
 ---
 
 
 ## Loading and preprocessing the data
 
+* Download zip file if not alredy present
+* Unzip if if not present
+* Load Data
+
+
+```{r}
+archiveFile <- "activity_data.zip"
+if(!file.exists(archiveFile)) {
+    archiveURL <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
+    download.file(url=archiveURL,destfile=archiveFile,method="curl")
+}
+
+if(!(file.exists("activity.csv"))) { unzip(archiveFile) }
+
+activity = read.csv("activity.csv")
+
+```
+
+Summary of activity data
+
+```{r}
+
+summary(activity)
+
+```
 
 
 ## What is mean total number of steps taken per day?
 
+Calculate the total number of steps taken per day
 
+```{r}
+
+totalSteps <- aggregate(steps ~ date, data = activity, sum, na.rm = TRUE)
+
+summary(totalSteps)
+
+```
+
+
+ Make a histogram of the total number of steps taken each day
+
+```{r}
+hist(totalSteps$steps)
+``` 
+
+Calculate and report the mean and median of the total number of steps taken per day
+
+```{r results="hide"}
+options(scipen = 1, digits = 2) #Format output 
+meanSteps = mean(totalSteps$steps)
+
+medianSteps = median(totalSteps$steps)
+
+```
+
+Mean steps is `r meanSteps` and median steps is `r medianSteps`
 
 ## What is the average daily activity pattern?
 
+Make a time series plot
 
+```{r}
+stepsInterval <- aggregate(steps ~ interval, data = activity, mean, na.rm = TRUE)
+plot(steps ~ interval, data = stepsInterval, type = "l")
+
+```
+
+
+```{r}
+maxStepsInterval = stepsInterval[which.max(stepsInterval$steps), ]$interval
+```
+
+Max steps occured in the `r maxStepsInterval` interval
 
 ## Imputing missing values
+
+Total number of missing values 
+
+```{r}
+sum(is.na(activity$steps))
+
+```
+
+
+```{r}
+interval2steps <- function(interval) {
+    stepsInterval[stepsInterval$interval == interval, ]$steps
+}
+
+activityFilled <- activity  
+count = 0  
+for (i in 1:nrow(activityFilled)) {
+    if (is.na(activityFilled[i, ]$steps)) {
+        activityFilled[i, ]$steps <- interval2steps(activityFilled[i, ]$interval)
+        count = count + 1
+    }
+}
+
+
+```
+
+A total of `r count` valus were filled.
+
+Make a histogram of the total number of steps with filled data
+
+```{r}
+totalSteps2 <- aggregate(steps ~ date, data = activityFilled, sum)
+hist(totalSteps2$steps)
+
+```
+
+Calculate and report the mean and median
+
+```{r}
+meanStepsFilled = mean(totalSteps2$steps)
+
+medianStepsFilled = median(totalSteps2$steps)
+
+```
+
+
+Mean steps is `r meanStepsFilled` and median steps is `r medianStepsFilled`
+
+Do these values differ from the estimates from the first part of the assignment? 
+
+Mean values are the same since mean was used to fill in data.
+ 
+What is the impact of imputing missing data on the estimates of the total daily number of steps?
+
+The median value shows a slight change up.
 
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+Create a new factor variable in the dataset with two levels – “weekday” and “weekend”
+
+```{r}
+activityFilled$day = ifelse(as.POSIXlt(as.Date(activityFilled$date))$wday%%6 == 
+    0, "weekend", "weekday")
+# For Sunday and Saturday : weekend, Other days : weekday
+activityFilled$day = factor(activityFilled$day, levels = c("weekday", "weekend"))
+
+```
+
+Make a panel plot containing a time series plot 
+
+```{r}
+
+stepsInterval2 = aggregate(steps ~ interval + day, activityFilled, mean)
+library(lattice)
+xyplot(steps ~ interval | factor(day), data = stepsInterval2, aspect = 1/2, 
+    type = "l")
+```
+
+
+Weekend activity appears to be overall higher, while weekday activity has a spike in the A.M. and generally lower as the day moves on.
