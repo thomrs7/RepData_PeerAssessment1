@@ -63,7 +63,7 @@ medianSteps = median(totalSteps$steps)
 
 ```
 
-Mean steps is `r meanSteps` and median steps is `r medianSteps`
+Mean steps is **`r meanSteps`** and median steps is **`r medianSteps`**
 
 ## What is the average daily activity pattern?
 
@@ -80,17 +80,19 @@ plot(steps ~ interval, data = stepsInterval, type = "l")
 maxStepsInterval = stepsInterval[which.max(stepsInterval$steps), ]$interval
 ```
 
-Max steps occured in the `r maxStepsInterval` interval
+Max steps occured in the **`r maxStepsInterval`** interval
 
 ## Imputing missing values
 
 Total number of missing values 
 
 ```{r}
-sum(is.na(activity$steps))
+missing = sum(is.na(activity$steps))
 
 ```
 
+
+There are  **`r missing`** valus
 
 ```{r}
 interval2steps <- function(interval) {
@@ -109,7 +111,7 @@ for (i in 1:nrow(activityFilled)) {
 
 ```
 
-A total of `r count` valus were filled.
+A total of **`r count`** valus were filled.
 
 Make a histogram of the total number of steps with filled data
 
@@ -129,7 +131,7 @@ medianStepsFilled = median(totalSteps2$steps)
 ```
 
 
-Mean steps is `r meanStepsFilled` and median steps is `r medianStepsFilled`
+Mean steps is **`r meanStepsFilled`** and median steps is **`r medianStepsFilled`**
 
 Do these values differ from the estimates from the first part of the assignment? 
 
